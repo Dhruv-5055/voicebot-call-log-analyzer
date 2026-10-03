@@ -13,6 +13,6 @@ conn.close()
 if df.empty is True:
     st.info("Database found")
 else:
-    st.dataframe("calls.db")
+    st.dataframe(df)
 
    
