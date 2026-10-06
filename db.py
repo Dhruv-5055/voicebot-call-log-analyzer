@@ -8,6 +8,8 @@ def get_connection():
 
 def add_call(caller_id,call_timestamp,time_duration_seconds,call_type):
     conn = get_connection()
-    conn.execute("INSERT INTO calls (caller_id,call_timestamp,time_duration_seconds,call_type) VALUES (?,?,?,?)", (caller_id,call_timestamp,time_duration_seconds,call_type))
-    conn.commit()
-    conn.close()
+    try:
+        conn.execute("INSERT INTO calls (caller_id,call_timestamp,time_duration_seconds,call_type) VALUES (?,?,?,?)", (caller_id,call_timestamp,time_duration_seconds,call_type))
+        conn.commit()
+    finally:
+        conn.close()
