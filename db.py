@@ -23,3 +23,14 @@ def update_call(caller_id,call_timestamp,time_duration_seconds,call_type,call_id
         return cur.rowcount
     finally:
         conn.close()
+
+
+def delete_call(call_id):
+    conn=get_connection()
+    try:
+        current=conn.execute("DELETE from calls  WHERE call_id = ?",(call_id,))
+        conn.commit()
+        return current.rowcount
+    finally:
+        conn.close()
+       
