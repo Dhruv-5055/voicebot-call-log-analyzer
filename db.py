@@ -47,7 +47,15 @@ def import_calls(file_name,df):
         return batch_id
     finally:
         conn.close()
-   
+
+
+def get_call(call_id):
+    conn=get_connection()
+    try:
+        current=conn.execute("SELECT caller_id, call_timestamp, time_duration_seconds, call_type FROM calls WHERE call_id = ?",(call_id,))
+        return current.fetchone()
+    finally:
+        conn.close()
 
 
 
