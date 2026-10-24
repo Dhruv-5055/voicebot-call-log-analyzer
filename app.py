@@ -50,6 +50,42 @@ if delete_submitted:
             st.success("Call deleted.")
 
 
+st.subheader("Edit a call")
+edit_id = st.number_input("Call ID to edit", min_value=1, step=1, key="edit_id")
+row = db.get_call(int(edit_id))
+if row is None:
+    st.info("No call with that ID.")
+else:
+    types = ["inbound", "outbound"]
+    with st.form("edit_form"):
+        caller_new = st.text_input("Caller ID", value=row[0], key=f"caller_{int(edit_id)}")
+        timestamp_new = st.text_input("Timestamp (YYYY-MM-DD HH:MM:SS)", value=row[1], key=f"ts_{int(edit_id)}")
+        duration_new = st.number_input("Duration (seconds)", min_value=0, value=int(row[2]), key=f"dur_{int(edit_id)}")
+        type_new = st.selectbox("Call type", types, index=types.index(row[3]), key=f"type_{int(edit_id)}")
+        edit_submitted = st.form_submit_button("Save changes")
+
+    if edit_submitted:
+        if not caller_new.strip():
+            st.warning("Please fill the Caller ID.")
+        elif not timestamp_new.strip():
+            st.warning("Please fill the Timestamp.")
+        else:
+            try:
+                datetime.strptime(timestamp_new, "%Y-%m-%d %H:%M:%S")
+            except ValueError:
+                st.warning("Timestamp must look like 2026-10-03 12:30:00.")
+            else:
+                try:
+                    changed = db.update_call(caller_new, timestamp_new, int(duration_new), type_new, int(edit_id))
+                except sqlite3.IntegrityError as e:
+                    st.error(f"Could not save: {e}")
+                else:
+                    if changed == 0:
+                        st.warning("No call with that ID.")
+                    else:
+                        st.success("Call updated.")
+
+
 st.subheader("Import calls from a CSV file")
 uploaded = st.file_uploader("Choose a CSV file", type="csv")
 if uploaded is not None:
