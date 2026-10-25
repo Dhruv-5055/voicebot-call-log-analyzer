@@ -1,0 +1,4 @@
+caller_id,call_timestamp,time_duration_seconds,call_type
++91-9800000091,2026-10-05 09:00:00,5,inbound
++91-9800000092,2026-10-05 09:10:00,90,outbound
++91-9800000093,2026-10-05 09:20:00,250,inbound
