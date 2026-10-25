@@ -3,6 +3,7 @@ import sqlite3
 import pandas as pd
 import db
 from datetime import datetime
+import stats
 
 st.title("Voice Bot Call log Analyser")
 
@@ -116,3 +117,27 @@ if df.empty:
     st.info("No calls have been imported yet.")
 else:
     st.dataframe(df)
+
+
+st.subheader("Statistics")
+summary = stats.call_summary()
+
+col1, col2, col3, col4 = st.columns(4)
+col1.metric("Total calls", summary["total"])
+col2.metric("Dropped", summary["dropped"])
+col3.metric("Escalated", summary["escalated"])
+col4.metric("Failure rate", f"{summary['failure_rate']:.1%}")
+
+if summary["total"] == 0:
+    st.info("No calls to chart yet.")
+else:
+    outcomes = pd.DataFrame({
+        "outcome": ["dropped", "escalated", "resolved"],
+        "calls": [summary["dropped"], summary["escalated"], summary["resolved"]],
+    })
+    st.write("Calls per outcome")
+    st.bar_chart(outcomes, x="outcome", y="calls")
+    st.write("Calls per day")
+    st.bar_chart(stats.calls_per_day(), x="day", y="calls")
+    st.write("Calls per type")
+    st.bar_chart(stats.calls_per_type(), x="CALL_TYPE", y="calls")
