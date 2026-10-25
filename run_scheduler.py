@@ -1,13 +1,15 @@
 import logging
 from apscheduler.schedulers.blocking import BlockingScheduler
 import ingest
+import tagging
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 
 
 def job():
     done, failed = ingest.ingest_folder()
-    logging.info("Ingest run finished: %s imported, %s failed", done, failed)
+    tagged = tagging.tag_untagged_calls()
+    logging.info("Run finished: %s imported, %s failed, %s tagged", done, failed, tagged)
 
 
 if __name__ == "__main__":
