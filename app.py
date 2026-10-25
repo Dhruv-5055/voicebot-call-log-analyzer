@@ -4,6 +4,7 @@ import pandas as pd
 import db
 from datetime import datetime
 import stats
+import tagging
 
 st.title("Voice Bot Call log Analyser")
 
@@ -84,6 +85,7 @@ else:
                     if changed == 0:
                         st.warning("No call with that ID.")
                     else:
+                        tagging.tag_untagged_calls()
                         st.success("Call updated.")
 
 
@@ -105,6 +107,7 @@ if uploaded is not None:
             except sqlite3.IntegrityError as e:
                 st.error(f"Import failed, nothing was saved: {e}")
             else:
+                tagging.tag_untagged_calls()
                 st.success(f"Imported {len(preview_df)} calls.")
 
 
