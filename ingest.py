@@ -5,6 +5,7 @@ import sqlite3
 import time
 import pandas as pd
 import db
+from validation import is_valid_phone
 
 REQUIRED = {"caller_id", "call_timestamp", "time_duration_seconds", "call_type"}
 SETTLE_SECONDS = 5
@@ -31,6 +32,9 @@ def ingest_folder(folder="incoming"):
             missing = REQUIRED - set(calls_df.columns)
             if missing:
                 raise ValueError(f"missing columns {sorted(missing)}")
+            bad = [n for n in calls_df["caller_id"] if not is_valid_phone(n)]
+            if bad:
+                raise ValueError(f"invalid caller numbers: {bad[:3]}")
             db.import_calls(path.name, calls_df)
         except (pd.errors.EmptyDataError, pd.errors.ParserError, ValueError, sqlite3.IntegrityError) as e:
             print(f"FAILED {path.name}: {e}")
