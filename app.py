@@ -106,6 +106,8 @@ if uploaded is not None:
         missing = {"caller_id", "call_timestamp", "time_duration_seconds", "call_type"} - set(preview_df.columns)
         if missing:
             st.error(f"Missing columns: {', '.join(sorted(missing))}")
+        elif not all(is_valid_phone(n) for n in preview_df["caller_id"]):
+            st.error("Some caller_id values are not valid mobile numbers (10 digits, with or without +91).")
         elif st.button("Import file"):
             try:
                 db.import_calls(uploaded.name, preview_df)
