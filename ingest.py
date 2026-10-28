@@ -2,10 +2,12 @@ from datetime import datetime
 from pathlib import Path
 import shutil
 import sqlite3
+import time
 import pandas as pd
 import db
 
 REQUIRED = {"caller_id", "call_timestamp", "time_duration_seconds", "call_type"}
+SETTLE_SECONDS = 5
 
 
 def move_file(path, folder):
@@ -20,6 +22,10 @@ def ingest_folder(folder="incoming"):
     done = 0
     failed = 0
     for path in sorted(Path(folder).glob("*.csv")):
+        age = time.time() - path.stat().st_mtime
+        if age < SETTLE_SECONDS:
+            print(f"WAITING {path.name}: still being written")
+            continue
         try:
             calls_df = pd.read_csv(path)
             missing = REQUIRED - set(calls_df.columns)
