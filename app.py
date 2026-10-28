@@ -4,6 +4,7 @@ import pandas as pd
 import db
 from datetime import datetime
 import stats
+from validation import is_valid_phone
 import tagging
 
 st.title("Voice Bot Call log Analyser")
@@ -21,6 +22,8 @@ if submitted:
         st.warning("Please fill the Caller ID.")
     elif not timestamp.strip():
         st.warning("Please fill the Timestamp.")
+    elif not is_valid_phone(caller_number):
+        st.warning("Caller ID must be a 10-digit mobile number, with or without +91.")
     else:
         try:
             datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
@@ -71,6 +74,8 @@ else:
             st.warning("Please fill the Caller ID.")
         elif not timestamp_new.strip():
             st.warning("Please fill the Timestamp.")
+        elif not is_valid_phone(caller_new):
+            st.warning("Caller ID must be a 10-digit mobile number, with or without +91.")
         else:
             try:
                 datetime.strptime(timestamp_new, "%Y-%m-%d %H:%M:%S")
