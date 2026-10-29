@@ -35,6 +35,7 @@ if submitted:
             except sqlite3.IntegrityError as e:
                 st.error(f"Could not save: {e}")
             else:
+                tagging.tag_untagged_calls()
                 st.success("Call saved.")
 
 
